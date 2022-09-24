@@ -15,7 +15,7 @@ import java.sql.SQLException;
 import java.util.Objects;
 
 @Slf4j
-@Service
+//@Service
 public class UserServiceImplTemplate implements UserService {
     private final JdbcTemplate jdbcTemplate;
 

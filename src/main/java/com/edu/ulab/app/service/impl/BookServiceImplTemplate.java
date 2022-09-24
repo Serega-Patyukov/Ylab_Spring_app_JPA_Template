@@ -15,7 +15,7 @@ import java.sql.SQLException;
 import java.util.Objects;
 
 @Slf4j
-@Service
+//@Service
 public class BookServiceImplTemplate implements BookService {
 
     private final JdbcTemplate jdbcTemplate;
