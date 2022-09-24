@@ -3,6 +3,7 @@ package com.edu.ulab.app.service.impl;
 import com.edu.ulab.app.dto.UserDto;
 import com.edu.ulab.app.entity.Person;
 import com.edu.ulab.app.exception.BadRequestException;
+import com.edu.ulab.app.exception.NotFoundException;
 import com.edu.ulab.app.mapper.UserMapper;
 import com.edu.ulab.app.repository.UserRepository;
 import com.edu.ulab.app.service.UserService;
@@ -58,6 +59,11 @@ public class UserServiceImplJpa implements UserService {
 
     @Override
     public void deleteUserById(Long id) {
+        Person person = userRepository.findById(id)
+                .orElseThrow(() -> new BadRequestException("id person not found"));
+        log.info("Get person from bd: {}", person);
 
+        userRepository.deleteById(id);
+        log.info("Delete person: {}", person);
     }
 }

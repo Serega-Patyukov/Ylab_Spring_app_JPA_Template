@@ -4,6 +4,7 @@ import com.edu.ulab.app.dto.BookDto;
 import com.edu.ulab.app.entity.Book;
 import com.edu.ulab.app.entity.Person;
 import com.edu.ulab.app.exception.BadRequestException;
+import com.edu.ulab.app.exception.NotFoundException;
 import com.edu.ulab.app.mapper.BookMapper;
 import com.edu.ulab.app.mapper.UserMapper;
 import com.edu.ulab.app.repository.BookRepository;
@@ -11,6 +12,9 @@ import com.edu.ulab.app.repository.UserRepository;
 import com.edu.ulab.app.service.BookService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -75,6 +79,13 @@ public class BookServiceImplJpa implements BookService {
 
     @Override
     public void deleteBookById(Long id) {
+        if (!userRepository.existsById(id)) throw new NotFoundException("id person not found");
 
+        ((List<Book>) bookRepository.findAll()).stream()
+                .filter(book -> book.getPerson().getId() == id)
+                .peek(book -> log.info("Get book : {}", book))
+                .peek(book -> log.info("Delete book : {}", book))
+                .peek(book -> bookRepository.deleteById(book.getId()))
+                .collect(Collectors.toList());
     }
 }

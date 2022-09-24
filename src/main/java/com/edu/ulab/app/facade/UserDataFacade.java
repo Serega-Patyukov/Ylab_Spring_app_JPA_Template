@@ -104,5 +104,8 @@ public class UserDataFacade {
     }
 
     public void deleteUserWithBooks(Long userId) {
+        log.info("Got user book delete request: userId {}", userId);
+        bookService.deleteBookById(userId);
+        userService.deleteUserById(userId);
     }
 }
