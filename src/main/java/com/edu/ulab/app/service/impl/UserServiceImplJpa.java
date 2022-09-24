@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
-@Service
+//@Service
 @Slf4j
 public class UserServiceImplJpa implements UserService {
 

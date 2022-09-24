@@ -15,7 +15,7 @@ import java.sql.SQLException;
 import java.util.Objects;
 
 @Slf4j
-//@Service
+@Service
 public class BookServiceImplTemplate implements BookService {
 
     private final JdbcTemplate jdbcTemplate;
@@ -26,6 +26,9 @@ public class BookServiceImplTemplate implements BookService {
 
     @Override
     public BookDto createBook(BookDto bookDto) {
+
+        //todo тут нужно проверить пользователя, есть он в бд или нет
+
         final String INSERT_SQL = "INSERT INTO BOOK(TITLE, AUTHOR, PAGE_COUNT, USER_ID) VALUES (?,?,?,?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(
@@ -43,13 +46,28 @@ public class BookServiceImplTemplate implements BookService {
                 keyHolder);
 
         bookDto.setId(Objects.requireNonNull(keyHolder.getKey()).longValue());
+        log.info("Save book : {}", bookDto);
+
         return bookDto;
     }
 
     @Override
     public BookDto updateBook(BookDto bookDto) {
-        // реализовать недстающие методы
-        return null;
+
+        //todo тут нужно проверить пользователя, есть он в бд или нет
+        // и проверить книгу
+
+        final String UPDATE_SQL = "UPDATE BOOK SET USER_ID = ?, TITLE = ?, AUTHOR = ?, PAGE_COUNT = ? WHERE ID = ?";
+        jdbcTemplate.update(UPDATE_SQL,
+                bookDto.getUserId(),
+                bookDto.getTitle(),
+                bookDto.getAuthor(),
+                bookDto.getPageCount(),
+                bookDto.getId());
+
+        log.info("Update book : {}", bookDto);
+
+        return bookDto;
     }
 
     @Override

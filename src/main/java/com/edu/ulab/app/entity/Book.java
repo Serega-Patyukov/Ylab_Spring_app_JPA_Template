@@ -20,6 +20,8 @@ public class Book {
     @JoinColumn(name = "person_id")
     private Person person;
 
+    private long userId;
+
     private String title;
     private String author;
     private long pageCount;

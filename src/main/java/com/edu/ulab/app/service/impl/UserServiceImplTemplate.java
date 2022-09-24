@@ -15,7 +15,7 @@ import java.sql.SQLException;
 import java.util.Objects;
 
 @Slf4j
-//@Service
+@Service
 public class UserServiceImplTemplate implements UserService {
     private final JdbcTemplate jdbcTemplate;
 
@@ -38,13 +38,26 @@ public class UserServiceImplTemplate implements UserService {
                 }, keyHolder);
 
         userDto.setId(Objects.requireNonNull(keyHolder.getKey()).longValue());
+        log.info("Save person: {}", userDto);
+
         return userDto;
     }
 
     @Override
     public UserDto updateUser(UserDto userDto) {
-        // реализовать недстающие методы
-        return null;
+
+        //todo тут нужно проверить пользователя, есть он в бд или нет
+
+        final String UPDATE_SQL = "UPDATE PERSON SET FULL_NAME = ?, TITLE = ?, AGE = ? WHERE ID = ?";
+        jdbcTemplate.update(UPDATE_SQL,
+                userDto.getFullName(),
+                userDto.getTitle(),
+                userDto.getAge(),
+                userDto.getId());
+
+        log.info("Update person: {}", userDto);
+
+        return userDto;
     }
 
     @Override
