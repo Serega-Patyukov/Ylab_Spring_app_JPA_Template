@@ -1,8 +1,10 @@
 package com.edu.ulab.app.service.impl;
 
 import com.edu.ulab.app.dto.UserDto;
+import com.edu.ulab.app.exception.BadRequestException;
 import com.edu.ulab.app.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -13,6 +15,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -62,8 +65,24 @@ public class UserServiceImplTemplate implements UserService {
 
     @Override
     public UserDto getUserById(Long id) {
-        // реализовать недстающие методы
-        return null;
+        final String SELECT_SQL = "SELECT ID, FULL_NAME, TITLE, AGE FROM PERSON WHERE ID = ?";
+        try {
+            UserDto userDto = jdbcTemplate.queryForObject(
+                    SELECT_SQL,
+                    (rs, rowNum) -> {
+                        UserDto dto = new UserDto();
+                        dto.setId((long) rs.getInt("ID"));
+                        dto.setFullName(rs.getString("FULL_NAME"));
+                        dto.setTitle(rs.getString("TITLE"));
+                        dto.setAge(rs.getInt("AGE"));
+                        return dto;
+                    },
+                    id);
+            log.info("Get id person: {}", id);
+            return userDto;
+        } catch (IncorrectResultSizeDataAccessException exc) {
+            throw new BadRequestException("id person not found");
+        }
     }
 
     @Override

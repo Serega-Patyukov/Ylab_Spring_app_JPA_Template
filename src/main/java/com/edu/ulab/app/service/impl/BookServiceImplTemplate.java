@@ -3,6 +3,7 @@ package com.edu.ulab.app.service.impl;
 import com.edu.ulab.app.dto.BookDto;
 import com.edu.ulab.app.service.BookService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -19,10 +20,13 @@ import java.util.Objects;
 public class BookServiceImplTemplate implements BookService {
 
     private final JdbcTemplate jdbcTemplate;
+    private final JdbcOperations jdbcOperations;
 
-    public BookServiceImplTemplate(JdbcTemplate jdbcTemplate) {
+    public BookServiceImplTemplate(JdbcTemplate jdbcTemplate, JdbcOperations jdbcOperations) {
         this.jdbcTemplate = jdbcTemplate;
+        this.jdbcOperations = jdbcOperations;
     }
+
 
     @Override
     public BookDto createBook(BookDto bookDto) {
@@ -72,8 +76,20 @@ public class BookServiceImplTemplate implements BookService {
 
     @Override
     public Iterable<BookDto> getBookById(Long id) {
-        // реализовать недстающие методы
-        return null;
+        final String SELECT_SQL = "SELECT USER_ID, ID, TITLE, AUTHOR, PAGE_COUNT FROM BOOK WHERE USER_ID = ?";
+        return jdbcOperations.query(
+                SELECT_SQL,
+                (rs, rowNum) -> {
+                    BookDto bookDto = new BookDto();
+                    bookDto.setUserId(rs.getLong("USER_ID"));
+                    bookDto.setId(rs.getLong("ID"));
+                    bookDto.setTitle(rs.getString("TITLE"));
+                    bookDto.setAuthor(rs.getString("AUTHOR"));
+                    bookDto.setPageCount(rs.getLong("PAGE_COUNT"));
+                    log.info("Get id book: {}", id);
+                    return bookDto;
+                },
+                id);
     }
 
     @Override
