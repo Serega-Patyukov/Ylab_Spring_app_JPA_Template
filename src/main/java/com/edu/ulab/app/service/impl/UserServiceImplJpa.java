@@ -10,6 +10,8 @@ import com.edu.ulab.app.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Service
 @Slf4j
 public class UserServiceImplJpa implements UserService {
@@ -35,10 +37,11 @@ public class UserServiceImplJpa implements UserService {
     }
 
     @Override
+    @Transactional
     public UserDto updateUser(UserDto userDto) {
         if (userDto.getId() < 1) throw new BadRequestException("Bad request");
 
-        Person person = userRepository.findById(userDto.getId())
+        Person person = userRepository.findByIdForUpdate(userDto.getId())
                 .orElseThrow(() -> new BadRequestException("id person not found"));
         log.info("Get person from bd: {}", person);
 
@@ -54,7 +57,12 @@ public class UserServiceImplJpa implements UserService {
 
     @Override
     public UserDto getUserById(Long id) {
-        return null;
+        Person person = userRepository.findById(id)
+                .orElseThrow(() -> new BadRequestException("id person not found"));
+
+        UserDto userDto = userMapper.personToUserDto(person);
+        log.info("Get id person: {}", id);
+        return userDto;
     }
 
     @Override

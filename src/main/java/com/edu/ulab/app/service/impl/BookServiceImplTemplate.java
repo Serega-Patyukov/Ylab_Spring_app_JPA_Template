@@ -53,7 +53,7 @@ public class BookServiceImplTemplate implements BookService {
     }
 
     @Override
-    public BookDto getBookById(Long id) {
+    public Iterable<BookDto> getBookById(Long id) {
         // реализовать недстающие методы
         return null;
     }

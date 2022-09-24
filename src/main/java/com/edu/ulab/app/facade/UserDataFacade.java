@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -100,7 +101,21 @@ public class UserDataFacade {
     }
 
     public UserBookResponse getUserWithBooks(Long userId) {
-        return null;
+        log.info("Got user book get request: {}", userId);
+
+        UserDto userDto = userService.getUserById(userId);
+        log.info("Mapped userDto response: {}", userDto);
+
+        List<Long> bookDtoList = ((List<BookDto>) bookService.getBookById(userId))
+                .stream()
+                .peek(bookDto -> log.info("Mapped bookDto response: {}", bookDto))
+                .map(bookDto -> bookDto.getId())
+                .collect(Collectors.toList());
+
+        return UserBookResponse.builder()
+                .userId(userDto.getId())
+                .booksIdList(bookDtoList)
+                .build();
     }
 
     public void deleteUserWithBooks(Long userId) {

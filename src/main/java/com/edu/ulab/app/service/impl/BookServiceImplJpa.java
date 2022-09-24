@@ -13,6 +13,7 @@ import com.edu.ulab.app.service.BookService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,10 +51,11 @@ public class BookServiceImplJpa implements BookService {
     }
 
     @Override
+    @Transactional
     public BookDto updateBook(BookDto bookDto) {
         if (bookDto.getId() < 1) throw new BadRequestException("Bad request");
 
-        Book book = bookRepository.findById(bookDto.getId())
+        Book book = bookRepository.findByIdForUpdate(bookDto.getId())
                 .orElseThrow(() -> new BadRequestException("id book not found"));
         log.info("Get book from bd: {}", book);
 
@@ -73,8 +75,13 @@ public class BookServiceImplJpa implements BookService {
     }
 
     @Override
-    public BookDto getBookById(Long id) {
-        return null;
+    public Iterable<BookDto> getBookById(Long id) {
+        if (!userRepository.existsById(id)) throw new NotFoundException("id person not found");
+
+        return ((List<Book>) bookRepository.findAll()).stream()
+                .filter(book -> book.getPerson().getId() == id)
+                .map(book -> bookMapper.bookToBookDto(book))
+                .collect(Collectors.toList());
     }
 
     @Override
