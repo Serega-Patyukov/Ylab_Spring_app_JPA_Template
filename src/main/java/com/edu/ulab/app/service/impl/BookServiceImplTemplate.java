@@ -1,6 +1,7 @@
 package com.edu.ulab.app.service.impl;
 
 import com.edu.ulab.app.dto.BookDto;
+import com.edu.ulab.app.exception.BadRequestException;
 import com.edu.ulab.app.service.BookService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcOperations;
@@ -21,17 +22,18 @@ public class BookServiceImplTemplate implements BookService {
 
     private final JdbcTemplate jdbcTemplate;
     private final JdbcOperations jdbcOperations;
+    private final UserServiceImplTemplate userServiceImplTemplate;
 
-    public BookServiceImplTemplate(JdbcTemplate jdbcTemplate, JdbcOperations jdbcOperations) {
+    public BookServiceImplTemplate(JdbcTemplate jdbcTemplate, JdbcOperations jdbcOperations, UserServiceImplTemplate userServiceImplTemplate) {
         this.jdbcTemplate = jdbcTemplate;
         this.jdbcOperations = jdbcOperations;
+        this.userServiceImplTemplate = userServiceImplTemplate;
     }
-
 
     @Override
     public BookDto createBook(BookDto bookDto) {
 
-        //todo тут нужно проверить пользователя, есть он в бд или нет
+        userServiceImplTemplate.getUserById(bookDto.getUserId());   // Проверим, есть ли пользователь с таким id
 
         final String INSERT_SQL = "INSERT INTO BOOK(TITLE, AUTHOR, PAGE_COUNT, USER_ID) VALUES (?,?,?,?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -58,16 +60,17 @@ public class BookServiceImplTemplate implements BookService {
     @Override
     public BookDto updateBook(BookDto bookDto) {
 
-        //todo тут нужно проверить пользователя, есть он в бд или нет
-        // и проверить книгу
+        userServiceImplTemplate.getUserById(bookDto.getUserId());   // Проверим, есть ли пользователь с таким id
 
         final String UPDATE_SQL = "UPDATE BOOK SET USER_ID = ?, TITLE = ?, AUTHOR = ?, PAGE_COUNT = ? WHERE ID = ?";
-        jdbcTemplate.update(UPDATE_SQL,
+        int amountUpdateBook = jdbcTemplate.update(UPDATE_SQL,
                 bookDto.getUserId(),
                 bookDto.getTitle(),
                 bookDto.getAuthor(),
                 bookDto.getPageCount(),
                 bookDto.getId());
+
+        if (amountUpdateBook == 0) throw  new BadRequestException("id book not found");
 
         log.info("Update book : {}", bookDto);
 
@@ -94,6 +97,8 @@ public class BookServiceImplTemplate implements BookService {
 
     @Override
     public void deleteBookById(Long id) {
-        // реализовать недстающие методы
+        final String DELETE_SQL = "DELETE FROM BOOK WHERE USER_ID = ?";
+        int amountDeleteBook = jdbcTemplate.update(DELETE_SQL, id);
+        log.info("Amount delete book on userId = " + id + ": {}", amountDeleteBook);
     }
 }

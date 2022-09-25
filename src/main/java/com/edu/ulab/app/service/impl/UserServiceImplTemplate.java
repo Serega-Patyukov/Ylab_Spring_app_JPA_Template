@@ -49,7 +49,7 @@ public class UserServiceImplTemplate implements UserService {
     @Override
     public UserDto updateUser(UserDto userDto) {
 
-        //todo тут нужно проверить пользователя, есть он в бд или нет
+        getUserById(userDto.getId());   // Проверим, есть ли пользователь с таким id
 
         final String UPDATE_SQL = "UPDATE PERSON SET FULL_NAME = ?, TITLE = ?, AGE = ? WHERE ID = ?";
         jdbcTemplate.update(UPDATE_SQL,
@@ -87,6 +87,8 @@ public class UserServiceImplTemplate implements UserService {
 
     @Override
     public void deleteUserById(Long id) {
-        // реализовать недстающие методы
+        final String DELETE_SQL = "DELETE FROM PERSON WHERE ID = ?";
+        int amountDeletePerson = jdbcTemplate.update(DELETE_SQL, id);
+        log.info("Amount delete person on id = " + id + ": {}", amountDeletePerson);
     }
 }
