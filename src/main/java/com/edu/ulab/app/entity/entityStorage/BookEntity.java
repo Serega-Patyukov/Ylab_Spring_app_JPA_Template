@@ -1,20 +1,15 @@
-package com.edu.ulab.app.entity;
-
+package com.edu.ulab.app.entity.entityStorage;
 
 import lombok.Data;
 
-import javax.persistence.*;
-
-@Entity
 @Data
-public class Book {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class BookEntity {
     private Long id;
+
+    // ManyToOne
+    // Двух стороння связь.
     private Long userId;
     private String title;
     private String author;
     private long pageCount;
-
-
 }
