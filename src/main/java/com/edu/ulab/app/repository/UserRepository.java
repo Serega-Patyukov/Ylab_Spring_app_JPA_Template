@@ -1,6 +1,6 @@
 package com.edu.ulab.app.repository;
 
-import com.edu.ulab.app.entity.Person;
+import com.edu.ulab.app.entity.entityJpaTemplate.Person;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

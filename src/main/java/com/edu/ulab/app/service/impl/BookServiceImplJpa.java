@@ -1,8 +1,8 @@
 package com.edu.ulab.app.service.impl;
 
 import com.edu.ulab.app.dto.BookDto;
-import com.edu.ulab.app.entity.Book;
-import com.edu.ulab.app.entity.Person;
+import com.edu.ulab.app.entity.entityJpaTemplate.Book;
+import com.edu.ulab.app.entity.entityJpaTemplate.Person;
 import com.edu.ulab.app.exception.BadRequestException;
 import com.edu.ulab.app.exception.NotFoundException;
 import com.edu.ulab.app.mapper.BookMapper;
@@ -17,7 +17,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-//@Service
+@Service
 @Slf4j
 public class BookServiceImplJpa implements BookService {
 

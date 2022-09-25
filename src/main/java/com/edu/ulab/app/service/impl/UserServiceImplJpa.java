@@ -1,9 +1,8 @@
 package com.edu.ulab.app.service.impl;
 
 import com.edu.ulab.app.dto.UserDto;
-import com.edu.ulab.app.entity.Person;
+import com.edu.ulab.app.entity.entityJpaTemplate.Person;
 import com.edu.ulab.app.exception.BadRequestException;
-import com.edu.ulab.app.exception.NotFoundException;
 import com.edu.ulab.app.mapper.UserMapper;
 import com.edu.ulab.app.repository.UserRepository;
 import com.edu.ulab.app.service.UserService;
@@ -12,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
-//@Service
+@Service
 @Slf4j
 public class UserServiceImplJpa implements UserService {
 

@@ -1,4 +1,4 @@
-package com.edu.ulab.app.entity;
+package com.edu.ulab.app.entity.entityJpaTemplate;
 
 
 import lombok.Data;
